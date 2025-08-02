@@ -1,0 +1,12 @@
+.idea
+
+.venv
+__pycache__
+.env
+
+allure-results
+allure-report
+
+*.html
+*.json
+screenshots

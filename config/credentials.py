@@ -1,0 +1,4 @@
+BASIC_EMAIL = "some@email.com"
+BASIC_PASSWORD = "123456"
+VALID_EMAIL_FIXTURE = 'mybirdflamingo@gmail.com'
+VALID_PASS_FIXTURE= '123456'
