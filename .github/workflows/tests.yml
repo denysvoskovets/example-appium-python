@@ -1,0 +1,120 @@
+name: UI tests
+
+on:
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    branches:
+#      - main
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: Choose test target
+        required: true
+        default: all_tests
+        type: choice
+        options:
+          - all_tests
+          - smoke
+          - regression
+          - authorization
+          - long
+          - browserstack
+
+jobs:
+  test-android:
+    if: ${{ contains('all_tests,smoke,regression,authorization,long', github.event.inputs.deployment_target) }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          emulator-options: '-no-snapshot'
+
+      - name: Start Android emulator
+        uses: react-native-community/github-action-android-emulator@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          emulator-options: '-no-window -no-audio -no-snapshot'
+          emulator-name: 'Pixel_6_API_33'
+
+      - name: Wait for emulator to start
+        run: adb wait-for-device
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run all tests
+        if: ${{ github.event.inputs.deployment_target == 'all_tests' }}
+        run: pytest --platform=android --device="Pixel 9" --alluredir=allure-results -v -s
+
+      - name: Run smoke tests
+        if: ${{ github.event.inputs.deployment_target == 'smoke' }}
+        run: pytest -m smoke --platform=android --device="Pixel 9" --alluredir=allure-results -v -s
+
+      - name: Run regression tests
+        if: ${{ github.event.inputs.deployment_target == 'regression' }}
+        run: pytest -m regression --platform=android --device="Pixel 9" --alluredir=allure-results -v -s
+
+      - name: Run authorization tests
+        if: ${{ github.event.inputs.deployment_target == 'authorization' }}
+        run: pytest -m authorization --platform=android --device="Pixel 9" --alluredir=allure-results -v -s
+
+      - name: Run long tests
+        if: ${{ github.event.inputs.deployment_target == 'long' }}
+        run: pytest -m long --platform=android --device="Pixel 9" --alluredir=allure-results -v -s
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+          retention-days: 1
+
+  test-browserstack:
+    if: ${{ github.event.inputs.deployment_target == 'browserstack' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests on BrowserStack
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          pytest --platform=android --device="Pixel 9" --browserstack --alluredir=allure-results -v -s
+
+      - name: Upload Allure results (BrowserStack)
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-browserstack
+          path: allure-results
+          retention-days: 1
