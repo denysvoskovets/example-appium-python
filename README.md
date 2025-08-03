@@ -14,17 +14,20 @@ Before running tests, ensure you have the following installed and configured on 
 - **pip** (Python package manager)  
   Comes bundled with Python; used to install required Python packages.
 
+- **Node.js** 
+  Required if you want to install and run Appium via npm.
+
 - **Appium Server**  
   Download and install Appium from [https://appium.io/](https://appium.io/). This is required to interact with mobile devices/emulators during testing.
+```bash
+npm i --location=global appium
+```
 
 - **Android SDK and Java JDK 11 or higher** (for Android testing)  
   Install Android SDK and Java (at least JDK 11) to run Android emulators. You can install Android Studio which bundles both.
 
 - (Not needed. In Framework not whole setup for iOS)**Xcode and iOS Simulator** (for iOS testing, macOS only)  
   If you want to test on iOS simulators, you need a Mac with Xcode installed.
-
-- **Node.js** 
-  Required if you want to install and run Appium via npm.
 
 ---
 
