@@ -71,13 +71,14 @@ def create_driver(platform, device, no_reset=False, use_browserstack=False):
 
 
 @pytest.fixture()
-def driver(cli_options):
+def driver(cli_options, request):
     driver = create_driver(
         platform=cli_options["platform"],
         device=cli_options["device"],
         no_reset=False,
         use_browserstack=cli_options["browserstack"],
     )
+    request.node._driver = driver
     yield driver
     driver.quit()
 
