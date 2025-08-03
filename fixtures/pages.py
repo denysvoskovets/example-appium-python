@@ -9,7 +9,6 @@ from pages.profile_page import ProfilePage
 def onboarding_page(driver) -> OnboardingPage:
     return OnboardingPage(driver)
 
-
 @pytest.fixture()
 def main_page(driver_with_state) -> MainPage:
     return MainPage(driver_with_state)

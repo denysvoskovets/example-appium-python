@@ -1,5 +1,3 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.webdriver.common.actions import interaction
@@ -19,26 +17,6 @@ class BasePage:
     @property
     def type_of(self) -> str:
         return "base element"
-
-    def wait_for_element(self, by, locator, condition=EC.presence_of_element_located, timeout=None):
-        timeout = timeout or self.timeout
-        logger.info(f"Waiting for element by {by}='{locator}' with timeout {timeout}s")
-        return WebDriverWait(self.driver, timeout).until(
-            condition((by, locator))
-        )
-
-    def wait_for_all_elements(self, by, locator, timeout=None):
-        timeout = timeout or self.timeout
-        return WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_all_elements_located((by, locator))
-        )
-
-    def click(self, by, locator):
-        element = self.wait_for_element(by, locator, condition=EC.element_to_be_clickable)
-        step = f'{self.type_of}: Tapping on element by locator ({by}, {locator})'
-        with allure.step(step):
-            logger.info(step)
-            element.click()
 
     def scroll_vertically(self, direction='down', duration=300):
         step = f'Scrolling vertically with direction {direction}'

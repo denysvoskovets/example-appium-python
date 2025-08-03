@@ -19,8 +19,7 @@ class TestSignUp:
         onboarding_page.fill_password(password)
         onboarding_page.tap_signup_button()
 
-        oops_email_label = onboarding_page.get_email_error_label()
-        assert oops_email_label.is_displayed()
+        assert onboarding_page.oops_label.is_displayed()
 
         # commenting because some test-id is crucial here. don't want to use time.sleep.
         # Test is flaky due to presence of element and rebuilding POM
@@ -31,20 +30,20 @@ class TestSignUp:
         onboarding_page.tap_navigate_signup_menu()
         onboarding_page.fill_email(BASIC_EMAIL)
         onboarding_page.fill_password(BASIC_PASSWORD)
-        assert onboarding_page.get_password_text() == '••••••'
+        assert onboarding_page.password_field.get_text() == '••••••'
 
         onboarding_page.tap_on_eye()
-        assert onboarding_page.get_password_text() == BASIC_PASSWORD
+        assert onboarding_page.password_field.get_text() == BASIC_PASSWORD
 
 
 @allure.suite("Onboarding")
 @pytest.mark.smoke
 @pytest.mark.long
-@pytest.mark.flaky(reruns=3, reruns_delay=2)
+@pytest.mark.flaky(reruns=2, reruns_delay=2)
 def test_full_onboarding(onboarding_page: OnboardingPage):
-    onboarding_page.tap_get_started()
+    onboarding_page.start_onboarding()
     onboarding_page.tap_english_selector()
-    onboarding_page.wait_instructions()
+    onboarding_page.instructions_label.should_be_visible()
     onboarding_page.tap_english_selector()
     onboarding_page.tap_continue()
     onboarding_page.tap_beginner()
@@ -56,4 +55,4 @@ def test_full_onboarding(onboarding_page: OnboardingPage):
     onboarding_page.tap_mins()
     onboarding_page.tap_enjoy()
 
-    assert onboarding_page.wait_for_sign_up_button().is_displayed()
+    assert onboarding_page.sign_up_with_email.is_displayed()

@@ -11,7 +11,6 @@ from appium import webdriver
 from config.capabilities import get_appium_server_url, APP_PACKAGE
 from config.credentials import VALID_EMAIL_FIXTURE, VALID_PASS_FIXTURE
 from pages.onboarding_page import OnboardingPage
-from selenium.webdriver.support import expected_conditions as EC
 from utils.cleanup import clear_screenshots_folder
 from datetime import datetime
 
@@ -48,7 +47,7 @@ def create_driver(platform, device, no_reset=False, use_browserstack=False):
             "platformName": platform,
             "deviceName": device,
             "automationName": "uiautomator2" if platform.lower() == "android" else "XCUITest",
-            "app": "bs://<your-app-id-on-browserstack>",  # заміни на свій app id
+            "app": "bs://<your-app-id-on-browserstack>",
             "project": "My Project",
             "build": "build-1",
             "name": "Sample Test",
@@ -97,7 +96,7 @@ def initialize_driver_state(cli_options):
     onboarding.fill_email(VALID_EMAIL_FIXTURE)
     onboarding.fill_password(VALID_PASS_FIXTURE)
     onboarding.tap_login_button()
-    onboarding.wait_for_element(*onboarding.setting_account_label, condition=EC.visibility_of_element_located)
+    onboarding.setting_account_label.is_displayed()
 
     driver.quit()
 

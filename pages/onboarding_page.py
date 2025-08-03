@@ -1,11 +1,13 @@
-import allure
 from appium.webdriver.common.appiumby import AppiumBy
-from selenium.common import TimeoutException, StaleElementReferenceException
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
-import time
-
+from page_factory.button import Button
+from page_factory.field import Field
+from page_factory.label import Label
+from page_factory.component import Component
 from pages.base_page import BasePage
+import time
+from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+from selenium.webdriver.support.wait import WebDriverWait
+
 from utils.image_utils import ImageUtils
 
 
@@ -13,108 +15,75 @@ class OnboardingPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
         self.image_utils = ImageUtils(driver)
+        self.driver = driver
 
-        self.get_started_button = (AppiumBy.ANDROID_UIAUTOMATOR,
-                                   'new UiSelector().className("android.view.View").childSelector(new UiSelector().text("GET STARTED"))')
-        self.i_have_an_account_button = (AppiumBy.XPATH,
-                                         '//android.view.View[./android.widget.TextView[@text="I HAVE AN ACCOUNT"]]')
+        self.get_started_button = Button(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().className("android.view.View").childSelector(new UiSelector().text("GET STARTED"))'), "Get Started")
+        self.i_have_an_account_button = Button(driver, (AppiumBy.XPATH, '//android.view.View[./android.widget.TextView[@text="I HAVE AN ACCOUNT"]]'), "I Have An Account")
 
-        self.log_in_text = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Log in")')
-        self.sign_up_text = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Sign up")')
-        self.sign_up_nav_button = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Sign up")')
-        self.email_field = (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[1]')
-        self.password_field = (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[2]')
-        self.password_eye_button = (AppiumBy.XPATH,
-                                    '//android.widget.ScrollView/android.widget.EditText[2]/android.view.View')
+        self.log_in_text = Label(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Log in")'), "Login Label")
+        self.sign_up_text = Label(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Sign up")'), "Signup Label")
+        self.sign_up_nav_button = Button(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Sign up")'), "Signup Nav Button")
 
-        self.login_button = (AppiumBy.XPATH, '//android.widget.TextView[@text="LOG IN"]')
-        self.sign_up_button = (AppiumBy.XPATH, '//android.widget.TextView[@text="SIGN UP"]')
+        self.email_field = Field(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[1]'), "Email Field")
+        self.password_field = Field(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[2]'), "Password Field")
+        self.password_eye_button = Button(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[2]/android.view.View'), "Password Eye")
 
-        self.oops_label = (AppiumBy.XPATH,
-                           '//android.widget.ScrollView/android.widget.EditText[1]/following-sibling::android.widget.TextView[1]')
-        self.wrong_password_label = (AppiumBy.XPATH,
-                                     '//android.widget.ScrollView/android.widget.EditText[2]/following-sibling::android.widget.TextView')
+        self.login_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="LOG IN"]'), "Login Button")
+        self.sign_up_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="SIGN UP"]'), "Signup Button")
 
-        self.setting_account_label = (AppiumBy.XPATH,
-                                      '//android.widget.TextView[@text="Setting up your learning experience"]')
+        self.oops_label = Label(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[1]/following-sibling::android.widget.TextView[1]'), "Oops Label")
+        self.wrong_password_label = Label(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[2]/following-sibling::android.widget.TextView'), "Wrong Password Label")
 
-        self.english_selector = (AppiumBy.XPATH, '//android.widget.TextView[@text="English"]')
-        self.instructions_label = (AppiumBy.XPATH, '//android.widget.TextView[@text="Instructions should be in:"]')
-        self.continue_button = (AppiumBy.XPATH, '//android.widget.TextView[@text="CONTINUE"]')
-        self.beginner_button = (AppiumBy.XPATH, '//android.widget.TextView[@text="Beginner"]')
-        self.motivation_elements = (AppiumBy.XPATH, '//android.widget.ScrollView/android.view.View')
-        self.motivation_continue_button = (AppiumBy.XPATH, '//android.widget.TextView[@text="CONTINUE"]')
-        self.topic_yes_button = (AppiumBy.XPATH,
-                                 '//android.widget.TextView[@text="YES"]/preceding-sibling::android.view.View[2]')
-        self.grammar_skill = (AppiumBy.XPATH, '//android.widget.TextView[@text="Grammar"]')
-        self.five_mins_element = (AppiumBy.XPATH, '//android.widget.TextView[@text="5 min"]')
-        self.enjoy_label = (AppiumBy.XPATH, '//android.widget.TextView[@text="Enjoyed by 10M people"]')
-        self.sign_up_with_email = (AppiumBy.XPATH, '//android.widget.TextView[@text="Sign up with email"]')
+        self.setting_account_label = Label(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Setting up your learning experience"]'), "Setting Account Label")
 
-    @allure.step("Tap get started")
-    def tap_get_started(self):
-        self.click(*self.get_started_button)
+        self.english_selector = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="English"]'), "English Selector")
+        self.instructions_label = Label(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Instructions should be in:"]'), "Instructions Label")
+        self.continue_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="CONTINUE"]'), "Continue Button")
+        self.beginner_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Beginner"]'), "Beginner Button")
 
-    @allure.step("Tap I_have_an_account")
+        self.motivation_elements = Component(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.view.View'), "Motivation Items")
+        self.motivation_continue_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="CONTINUE"]'), "Motivation Continue Button")
+        self.topic_yes_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="YES"]/preceding-sibling::android.view.View[2]'), "Yes Topic Button")
+        self.grammar_skill = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Grammar"]'), "Grammar Skill")
+        self.five_mins_element = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="5 min"]'), "5 Min")
+        self.enjoy_label = Label(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Enjoyed by 10M people"]'), "Enjoy Label")
+        self.sign_up_with_email = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Sign up with email"]'), "Sign Up With Email")
+
+    def start_onboarding(self):
+        self.get_started_button.click()
+
     def tap_i_have_an_account(self):
-        self.click(*self.i_have_an_account_button)
+        self.i_have_an_account_button.click()
 
-    def wait_for_login_text(self):
-        return self.wait_for_element(*self.log_in_text)
-
-    @allure.step("Fill email field")
     def fill_email(self, email: str):
-        email_input = self.wait_for_element(*self.email_field)
-        email_input.send_keys(email)
+        self.email_field.fill(email)
 
-    @allure.step("Fill password field")
     def fill_password(self, password: str):
-        password_input = self.wait_for_element(*self.password_field)
-        password_input.send_keys(password)
+        self.password_field.fill(password)
 
-    @allure.step("Tap login button")
     def tap_login_button(self):
-        self.click(*self.login_button)
+        self.login_button.click()
 
-    @allure.step("Tap to SignUp menu")
     def tap_navigate_signup_menu(self):
-        self.click(*self.sign_up_nav_button)
+        self.sign_up_nav_button.click()
 
-    @allure.step("Tap SignUp button")
     def tap_signup_button(self):
-        self.click(*self.sign_up_button)
+        self.sign_up_button.click()
 
-    def get_email_error_label(self):
-        return self.wait_for_element(*self.oops_label, condition=EC.element_to_be_clickable)
-
-    def get_password_error_label(self):
-        return self.wait_for_element(*self.wrong_password_label, condition=EC.element_to_be_clickable)
-
-    @allure.step("Tap on Eye")
     def tap_on_eye(self):
-        self.click(*self.password_eye_button)
+        self.password_eye_button.click()
 
-    def get_password_text(self):
-        return self.wait_for_element(*self.password_field, condition=EC.element_to_be_clickable).text
-
-    @allure.step("Select English")
     def tap_english_selector(self):
-        self.click(*self.english_selector)
+        self.english_selector.click()
 
-    def wait_instructions(self):
-        return self.wait_for_element(*self.instructions_label)
-
-    @allure.step("Tap Continue")
     def tap_continue(self):
-        self.click(*self.continue_button)
+        self.continue_button.click()
 
-    @allure.step("Select beginner")
     def tap_beginner(self):
-        self.click(*self.beginner_button)
+        self.beginner_button.click()
 
-    @allure.step("Select motivations on indexes {indexes}")
     def select_and_compare_motivations(self, count=1, indexes=None, check_visual=False):
-        elements = self.wait_for_all_elements(*self.motivation_elements)
+        elements = self.motivation_elements.get_elements()
 
         if indexes is None:
             indexes = list(range(min(count, len(elements))))
@@ -125,55 +94,47 @@ class OnboardingPage(BasePage):
             before = self.image_utils.take_screenshot_as_image()
             el.click()
             time.sleep(1)
-
             after = self.image_utils.take_screenshot_as_image()
 
             if check_visual:
                 are_similar, diff = self.image_utils.compare_images(before, after)
-
                 before.save(f"utils/screenshots/motivation_{i}_before.png")
                 after.save(f"utils/screenshots/motivation_{i}_after.png")
                 diff.save(f"utils/screenshots/motivation_{i}_diff.png")
-
                 assert not are_similar, f"Motivation {i} did not visually change after selection"
 
-    @allure.step("Tap Continue")
     def tap_motivations_continue(self):
-        self.click(*self.motivation_continue_button)
+        self.motivation_continue_button.click()
 
-    @allure.step("Tap Yes topic")
     def tap_topic_yes(self):
-        self.click(*self.topic_yes_button)
+        self.topic_yes_button.click()
 
-    def tap_topic_yes_until_gone(self, count=12, delay_seconds=.7):
+    def tap_topic_yes_until_gone(self, count=12, delay_seconds=0.7):
         wait = WebDriverWait(self.driver, delay_seconds)
         for i in range(count):
             try:
-                button = wait.until(EC.element_to_be_clickable(self.topic_yes_button))
-                button.click()
+                self.topic_yes_button.is_displayed()
+                self.topic_yes_button.click()
             except (TimeoutException, StaleElementReferenceException):
                 break
             time.sleep(delay_seconds)
 
-    @allure.step("Select skill")
     def tap_skill(self):
-        self.click(*self.grammar_skill)
+        self.grammar_skill.click()
 
-    @allure.step("Select mins")
     def tap_mins(self):
-        self.click(*self.five_mins_element)
+        self.five_mins_element.click()
 
-    @allure.step("Tap enjoy")
     def tap_enjoy(self):
-        self.wait_for_element(*self.enjoy_label, condition=EC.element_to_be_clickable)
+        self.enjoy_label.is_displayed()
         self.tap_continue()
 
     def wait_for_sign_up_button(self):
-        return self.wait_for_element(*self.sign_up_with_email)
+        self.sign_up_with_email.is_displayed()
 
     def perform_login(self, email: str, password: str):
         self.tap_i_have_an_account()
-        self.wait_for_login_text()
+        self.log_in_text.is_displayed()
         self.fill_email(email)
         self.fill_password(password)
         self.tap_login_button()
