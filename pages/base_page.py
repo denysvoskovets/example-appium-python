@@ -13,10 +13,17 @@ class BasePage:
     def __init__(self, driver, timeout=10):
         self.driver = driver
         self.timeout = timeout
+        self.platform = driver.capabilities.get("platformName", "").lower()
 
     @property
     def type_of(self) -> str:
         return "base element"
+
+    def get_locator(self, locator_dict: dict) -> tuple:
+        locator = locator_dict.get(self.platform)
+        if locator is None:
+            raise ValueError(f"Locator for platform '{self.platform}' is not defined")
+        return locator
 
     def scroll_vertically(self, direction='down', duration=300):
         step = f'Scrolling vertically with direction {direction}'

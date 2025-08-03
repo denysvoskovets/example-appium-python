@@ -1,4 +1,3 @@
-from appium.webdriver.common.appiumby import AppiumBy
 from page_factory.button import Button
 from page_factory.field import Field
 from page_factory.label import Label
@@ -9,45 +8,47 @@ from selenium.common.exceptions import TimeoutException, StaleElementReferenceEx
 from selenium.webdriver.support.wait import WebDriverWait
 
 from utils.image_utils import ImageUtils
+import pages.locators.onboarding_page_locators as loc
 
 
 class OnboardingPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
         self.image_utils = ImageUtils(driver)
-        self.driver = driver
 
-        self.get_started_button = Button(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().className("android.view.View").childSelector(new UiSelector().text("GET STARTED"))'), "Get Started")
-        self.i_have_an_account_button = Button(driver, (AppiumBy.XPATH, '//android.view.View[./android.widget.TextView[@text="I HAVE AN ACCOUNT"]]'), "I Have An Account")
+        self.get_started_button = Button(driver, self.get_locator(loc.GET_STARTED_BUTTON), "Get Started")
+        self.i_have_an_account_button = Button(driver, self.get_locator(loc.I_HAVE_AN_ACCOUNT_BUTTON),
+                                               "I Have An Account")
 
-        self.log_in_text = Label(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Log in")'), "Login Label")
-        self.sign_up_text = Label(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Sign up")'), "Signup Label")
-        self.sign_up_nav_button = Button(driver, (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Sign up")'), "Signup Nav Button")
+        self.log_in_text = Label(driver, self.get_locator(loc.LOG_IN_TEXT), "Login Label")
+        self.sign_up_text = Label(driver, self.get_locator(loc.SIGN_UP_TEXT), "Signup Label")
+        self.sign_up_nav_button = Button(driver, self.get_locator(loc.SIGN_UP_NAV_BUTTON), "Signup Nav Button")
 
-        self.email_field = Field(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[1]'), "Email Field")
-        self.password_field = Field(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[2]'), "Password Field")
-        self.password_eye_button = Button(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[2]/android.view.View'), "Password Eye")
+        self.email_field = Field(driver, self.get_locator(loc.EMAIL_FIELD), "Email Field")
+        self.password_field = Field(driver, self.get_locator(loc.PASSWORD_FIELD), "Password Field")
+        self.password_eye_button = Button(driver, self.get_locator(loc.PASSWORD_EYE_BUTTON), "Password Eye")
 
-        self.login_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="LOG IN"]'), "Login Button")
-        self.sign_up_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="SIGN UP"]'), "Signup Button")
+        self.login_button = Button(driver, self.get_locator(loc.LOGIN_BUTTON), "Login Button")
+        self.sign_up_button = Button(driver, self.get_locator(loc.SIGN_UP_BUTTON), "Signup Button")
 
-        self.oops_label = Label(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[1]/following-sibling::android.widget.TextView[1]'), "Oops Label")
-        self.wrong_password_label = Label(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.widget.EditText[2]/following-sibling::android.widget.TextView'), "Wrong Password Label")
+        self.oops_label = Label(driver, self.get_locator(loc.OOPS_LABEL), "Oops Label")
+        self.wrong_password_label = Label(driver, self.get_locator(loc.WRONG_PASSWORD_LABEL), "Wrong Password Label")
 
-        self.setting_account_label = Label(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Setting up your learning experience"]'), "Setting Account Label")
+        self.setting_account_label = Label(driver, self.get_locator(loc.SETTING_ACCOUNT_LABEL), "Setting Account Label")
 
-        self.english_selector = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="English"]'), "English Selector")
-        self.instructions_label = Label(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Instructions should be in:"]'), "Instructions Label")
-        self.continue_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="CONTINUE"]'), "Continue Button")
-        self.beginner_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Beginner"]'), "Beginner Button")
+        self.english_selector = Button(driver, self.get_locator(loc.ENGLISH_SELECTOR), "English Selector")
+        self.instructions_label = Label(driver, self.get_locator(loc.INSTRUCTIONS_LABEL), "Instructions Label")
+        self.continue_button = Button(driver, self.get_locator(loc.CONTINUE_BUTTON), "Continue Button")
+        self.beginner_button = Button(driver, self.get_locator(loc.BEGINNER_BUTTON), "Beginner Button")
 
-        self.motivation_elements = Component(driver, (AppiumBy.XPATH, '//android.widget.ScrollView/android.view.View'), "Motivation Items")
-        self.motivation_continue_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="CONTINUE"]'), "Motivation Continue Button")
-        self.topic_yes_button = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="YES"]/preceding-sibling::android.view.View[2]'), "Yes Topic Button")
-        self.grammar_skill = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Grammar"]'), "Grammar Skill")
-        self.five_mins_element = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="5 min"]'), "5 Min")
-        self.enjoy_label = Label(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Enjoyed by 10M people"]'), "Enjoy Label")
-        self.sign_up_with_email = Button(driver, (AppiumBy.XPATH, '//android.widget.TextView[@text="Sign up with email"]'), "Sign Up With Email")
+        self.motivation_elements = Component(driver, self.get_locator(loc.MOTIVATION_ELEMENTS), "Motivation Items")
+        self.motivation_continue_button = Button(driver, self.get_locator(loc.MOTIVATION_CONTINUE_BUTTON),
+                                                 "Motivation Continue Button")
+        self.topic_yes_button = Button(driver, self.get_locator(loc.TOPIC_YES_BUTTON), "Yes Topic Button")
+        self.grammar_skill = Button(driver, self.get_locator(loc.GRAMMAR_SKILL), "Grammar Skill")
+        self.five_mins_element = Button(driver, self.get_locator(loc.FIVE_MINS_ELEMENT), "5 Min")
+        self.enjoy_label = Label(driver, self.get_locator(loc.ENJOY_LABEL), "Enjoy Label")
+        self.sign_up_with_email = Button(driver, self.get_locator(loc.SIGN_UP_WITH_EMAIL), "Sign Up With Email")
 
     def start_onboarding(self):
         self.get_started_button.click()
